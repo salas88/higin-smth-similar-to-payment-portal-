@@ -28,6 +28,15 @@ public class ClientRestExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ClientErrorResponse> handlerException(PaymentRequiredException exception){
 
+
+        ClientErrorResponse error = new ClientErrorResponse(
+                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                exception.getMessage());
+
+        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 
 }

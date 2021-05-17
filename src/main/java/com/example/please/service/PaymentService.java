@@ -2,25 +2,23 @@ package com.example.please.service;
 
 import com.example.please.entity.Account;
 import com.example.please.entity.Payment;
+import com.example.please.error.PaymentRequiredException;
 import com.example.please.repo.AccountRepo;
 import com.example.please.repo.PaymentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class PaymentService {
 
     @Autowired
-    private ClientService clientService;
-    @Autowired
     private AccountRepo accountRepo;
     @Autowired
     private PaymentRepo paymentRepo;
 
-    public boolean createPayment(Payment payment) throws NoSuchElementException{
+    public boolean createPayment(Payment payment) {
 
         Account accountSource = accountRepo.findById(payment.getSourceAccId()).get();
         Account accountDest = accountRepo.findById(payment.getDestAccId()).get();
@@ -35,8 +33,12 @@ public class PaymentService {
                accountRepo.save(accountDest);
                paymentRepo.save(payment);
                return true;
-            } else
-                return false;
+            } else {
+                throw new PaymentRequiredException("недостаточно средствв на счете");
+            }
+    }
+
+    public List<Payment> getAllPayments(){
 
     }
 }

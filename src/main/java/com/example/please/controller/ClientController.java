@@ -5,17 +5,18 @@ import com.example.please.entity.Client;
 import com.example.please.entity.Payment;
 import com.example.please.error.ClientNotFoundException;
 import com.example.please.error.ClientRestExceptionHandler;
+import com.example.please.error.PaymentRequiredException;
 import com.example.please.service.ClientService;
 import com.example.please.service.PaymentService;
+import com.example.please.utils.EntityDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.net.http.HttpResponse;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -26,16 +27,17 @@ public class ClientController {
     @Autowired
     private PaymentService paymentService;
 
-    //check this method for bad request
+
     @PostMapping("/add")
     public ResponseEntity addNewClient(@RequestBody Client client){
 
         try {
             clientService.save(client);
 
-            return new ResponseEntity(new HashMap<String, Integer>(){{
-                                            put("client_id",client.getId());}}
-                    ,                 HttpStatus.CREATED);
+            return new ResponseEntity(
+                    new HashMap<String, Integer>(){{
+                        put("client_id",client.getId());}},
+                    HttpStatus.CREATED);
         }catch (Exception e){
             return new ClientRestExceptionHandler().handlerException(e);
         }
@@ -54,32 +56,55 @@ public class ClientController {
         return client.get().getAccounts();
     }
 
+    // I think this method is done
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/clients/payment",
+            consumes={"application/json", "application/xml"},
+            produces={"application/json", "application/xml"})
+    public HttpEntity addPayment(@RequestBody Payment payment){
+           try {
+               if(paymentService.createPayment(payment)){
+                   return new HttpEntity(new HashMap<String,Integer>()
+                   {{
+                       put("payment_id", payment.getId());
+                   }});
+               }
+           } catch (NoSuchElementException e){
+               return new ClientRestExceptionHandler().handlerException(e);
+           }
+        return new ClientRestExceptionHandler().handlerException(new PaymentRequiredException("недостаточно средст"));
+    }
+
 
     @PostMapping("/clients/payments")
-    public List<ResponseEntity> addNewPayment(@RequestBody Payment... payment){
+    @ResponseStatus(HttpStatus.OK)
+    public Object addNewPayments(@RequestBody Payment... payment){
 
+        List<ResponseEntity> paymentList = Arrays.stream(payment)
+                .map(el -> {
+                    try {
+                        if(paymentService.createPayment(el)){
+                            return ResponseEntity.ok().build();
+                        }else {
+                            return new ResponseEntity(
+                             HttpStatus.UNPROCESSABLE_ENTITY
+                            );
+                        }
+                    } catch (PaymentRequiredException e) {
+                        return new ClientRestExceptionHandler().handlerException(e);
+                    }})
+                .collect(Collectors.toList());
 
+        boolean b = paymentList
+                .stream()
+                .allMatch(el -> el.getStatusCode().value() == 402);
 
-            List<ResponseEntity> lists =  Arrays.stream(payment).map( el -> {
-                try{
-                    if(paymentService.createPayment(el)){
-                        return new ResponseEntity(new HashMap<String,Integer>(){{
-                            put("payment_id", el.getId());}},
-                                HttpStatus.CREATED);
-                    } else{
-                        return new ResponseEntity(new HashMap<String, String>(){{
-                            put("account_id",el.getSourceAccId().toString());
-                            put("name_client", clientService.findById(el.getSourceAccId()).get().getFirstName());
-                            put("message", "Недостаточно средств");}},
-                                HttpStatus.PAYMENT_REQUIRED);
-                    }
-                } catch (Exception e){
-                    return new ClientRestExceptionHandler().handlerException(e);
-                }
-
-            }).collect(Collectors.toList());
-
-        return lists;
+        return b ?
+                new ClientRestExceptionHandler().handlerException(
+                        new PaymentRequiredException(
+                                "недостаточно средст у всех запросов")) : paymentList;
     };
 
 }
