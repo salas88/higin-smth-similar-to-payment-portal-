@@ -20,30 +20,23 @@ public class PaymentService {
     @Autowired
     private PaymentRepo paymentRepo;
 
-    public boolean createPayment(Payment payment){
+    public boolean createPayment(Payment payment) throws NoSuchElementException{
 
         Account accountSource = accountRepo.findById(payment.getSourceAccId()).get();
         Account accountDest = accountRepo.findById(payment.getDestAccId()).get();
         Double accountSourceBalance = accountSource.getBalance();
         Double accountDestBalance = accountDest.getBalance();
         Double amount = payment.getAmount();
-        try {
 
-            if(accountSourceBalance <= amount){
+            if(accountSourceBalance >= amount){
                accountSource.setBalance((accountSourceBalance-amount));
                accountDest.setBalance((accountDestBalance+amount));
                accountRepo.save(accountSource);
                accountRepo.save(accountDest);
                paymentRepo.save(payment);
-
+               return true;
             } else
                 return false;
 
-
-        } catch (NoSuchElementException e){
-            return false;
-        }
-
-        return true;
     }
 }

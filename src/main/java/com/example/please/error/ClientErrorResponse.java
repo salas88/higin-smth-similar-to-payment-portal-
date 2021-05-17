@@ -3,12 +3,12 @@ package com.example.please.error;
 public class ClientErrorResponse {
     private int status;
     private String message;
-    private long timeStamp;
 
-    public ClientErrorResponse(int status, String message, long timeStamp) {
+
+    public ClientErrorResponse(int status, String message) {
         this.status = status;
         this.message = message;
-        this.timeStamp = timeStamp;
+
     }
 
     public ClientErrorResponse() {
@@ -30,11 +30,6 @@ public class ClientErrorResponse {
         this.message = message;
     }
 
-    public long getTimeStamp() {
-        return timeStamp;
-    }
 
-    public void setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
-    }
+
 }

@@ -12,8 +12,7 @@ public class ClientRestExceptionHandler {
     public ResponseEntity<ClientErrorResponse> handlerException(ClientNotFoundException exception){
         ClientErrorResponse error = new ClientErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
-                exception.getMessage(),
-                System.currentTimeMillis()
+                exception.getMessage()
         );
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
@@ -24,9 +23,11 @@ public class ClientRestExceptionHandler {
 
         ClientErrorResponse error = new ClientErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
-                exception.getMessage(),
-                System.currentTimeMillis());
+                exception.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+
+
 }

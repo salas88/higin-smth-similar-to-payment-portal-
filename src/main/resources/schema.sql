@@ -17,8 +17,7 @@ CREATE TABLE IF NOT EXISTS `hugin`.`account`(
 
 CREATE TABLE IF NOT EXISTS `hugin`.`payment`(
     `id` INT NOT NULL AUTO_INCREMENT,
-    `amount` double precision NOT NULL,
-    `create_date_time` datetime(6) NOT NULL,
+    `amount` double NOT NULL,
     `dest_acc_id` INT NOT NULL,
     `reason` varchar (255) NOT NULL,
     `source_acc_id` INT NOT NULL,
