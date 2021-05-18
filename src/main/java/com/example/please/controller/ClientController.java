@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 public class ClientController {
+
     @Autowired
     private ClientService clientService;
     @Autowired
@@ -124,13 +125,13 @@ public class ClientController {
                     produces={"application/json", "application/xml"})
     public Object getHistoryPayments(@RequestBody Payment payment){
 
-        List<PaymentDto> all = paymentService.findAll(payment);
+        List<PaymentDto> paymentDtoList = paymentService.findAll(payment);
 
-        if(all.isEmpty())
+        if(paymentDtoList.isEmpty())
            return new ClientRestExceptionHandler()
                     .handlerException(new ClientNotFoundException("Такого платежа не существует"));
 
-        return all;
+        return paymentDtoList;
     }
 
 }

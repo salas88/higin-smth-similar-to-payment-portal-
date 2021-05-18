@@ -24,6 +24,7 @@ public class PaymentDto {
         public Builder(){
             paymentDto = new PaymentDto();
         }
+
         public Builder withPaymentId(Integer paymentId){
             paymentDto.payment_id = paymentId;
             return this;
