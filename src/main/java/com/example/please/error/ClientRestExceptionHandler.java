@@ -29,7 +29,7 @@ public class ClientRestExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ClientErrorResponse> handlerException(PaymentRequiredException exception){
+    public ResponseEntity<ClientErrorResponse> handlerException(UnprocessableEntityException exception){
 
 
         ClientErrorResponse error = new ClientErrorResponse(

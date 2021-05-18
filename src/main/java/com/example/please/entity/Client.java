@@ -1,11 +1,9 @@
 package com.example.please.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,23 +25,6 @@ public class Client {
     @JsonManagedReference
     private List<Account> accounts;
 
-    public Client(String firstName, String lastName, List<Account> accounts) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.accounts = accounts;
-    }
-
-    public Client(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
-    public void addAcc(Account account){
-        if(accounts == null)
-            accounts = new ArrayList<>();
-        accounts.add(account);
-        account.setClient(this);
-    }
 
     @Override
     public boolean equals(Object o) {

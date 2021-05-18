@@ -1,14 +1,11 @@
 package com.example.please.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Enumeration;
 
 @Entity
 @Getter
@@ -21,14 +18,10 @@ public class Account {
     private AccountType accountType;
     private Double balance;
 
-    @ManyToOne(cascade = CascadeType.ALL,
-                            fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},
+               fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
     @JsonBackReference
     private Client client;
 
-    public Account(AccountType accountType, Double balance) {
-        this.accountType = accountType;
-        this.balance = balance;
-    }
 }

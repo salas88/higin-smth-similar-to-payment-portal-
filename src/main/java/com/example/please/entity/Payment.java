@@ -1,10 +1,10 @@
 package com.example.please.entity;
 
+import com.sun.istack.Nullable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -20,19 +20,14 @@ public class Payment {
     private Integer sourceAccId;
     @Column(name = "dest_acc_id")
     private Integer destAccId;
+    @Nullable
     private Double amount;
+    @Nullable
     private String reason;
     @CreationTimestamp
     private LocalDateTime createDateTime;
-
-
-    public Payment(Integer sourceAccId, Integer destAccId, Double amount, String reason) {
-        this.sourceAccId = sourceAccId;
-        this.destAccId = destAccId;
-        this.amount = amount;
-        this.reason = reason;
-    }
-
-
-
+    @Nullable
+    private Integer payerId;
+    @Nullable
+    private Integer recipientId;
 }
