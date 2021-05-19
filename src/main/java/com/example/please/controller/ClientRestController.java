@@ -20,15 +20,32 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
-public class ClientController {
+public class ClientRestController {
 
     @Autowired
     private ClientService clientService;
     @Autowired
     private PaymentService paymentService;
 
+//    @Autowired
+//    private ClientJdbcDto clientClientDto;
+//
+//
+//    // костыль то я придумал, но достаю только один вложеный объект вместо массива
+//    @GetMapping("/test")
+//    public List<Account> get(){
+//        List<Client> allClient = clientClientDto.findAll();
+//
+//        List<Account> collect = allClient.stream().flatMap(el -> el.getAccounts().stream()).collect(Collectors.toList());
+//
+//        List<Account> collect1 = collect.stream().map(el -> clientClientDto.findAccById(el.getId())).collect(Collectors.toList());
+//
+//        return collect1;
+//    }
+
+    // create new Client into method signature transfer Client json or xml
     @RequestMapping(
-            method = RequestMethod.POST,
+            method = RequestMethod.GET,
             value = "/clients",
             consumes={"application/json", "application/xml"},
             produces={"application/json", "application/xml"})
@@ -50,9 +67,10 @@ public class ClientController {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/clients/{clientId}",
-            consumes={"application/json", "application/xml"},
-            produces={"application/json", "application/xml"})
+            value = "/clients/{clientId}"
+//            ,consumes={"application/json", "application/xml"},
+//            produces={"application/json", "application/xml"}
+            )
     public List<Account> getClientsAccount(@PathVariable int clientId){
         Optional<Client> client = clientService.findById(clientId);
 

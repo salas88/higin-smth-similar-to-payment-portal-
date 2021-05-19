@@ -25,6 +25,14 @@ public class Client {
     @JsonManagedReference
     private List<Account> accounts;
 
+    public void addItem(Account account){
+        if(accounts == null){
+            accounts = new ArrayList<>();
+        }
+        accounts.add(account);
+        account.setClient(this);
+    }
+
 
     @Override
     public boolean equals(Object o) {

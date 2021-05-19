@@ -1,15 +1,17 @@
-create table account (
-    id integer not null auto_increment,
+create table account
+(
+    id           integer not null auto_increment,
     account_type integer,
-    balance double precision,
-    client_id integer, primary key (id)
+    balance      double precision,
+    client_id    integer, primary key (id)
 );
 
-create table client (
-    id integer not null auto_increment,
-    first_name varchar(255),
-    last_name varchar(255),
-    Primary key (id)
+create table client
+(
+    id          integer not null auto_increment,
+    first_name  varchar(255),
+    last_name   varchar(255),
+    key (id)
 );
 
 
