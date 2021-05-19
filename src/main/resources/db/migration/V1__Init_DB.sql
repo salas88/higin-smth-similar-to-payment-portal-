@@ -11,6 +11,7 @@ create table client
     id          integer not null auto_increment,
     first_name  varchar(255),
     last_name   varchar(255),
+    password    varchar(255),
     key (id)
 );
 
@@ -27,6 +28,12 @@ create table payment
     recipient_id     integer,
     source_acc_id    integer,
     key (id)
+);
+
+create table client_role(
+  client_id integer,
+  role_set     varchar(255),
+  foreign key (client_id) references client(id)
 );
 
 alter table account add constraint account_client_kk foreign key (client_id) references client (id);

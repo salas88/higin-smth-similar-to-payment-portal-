@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface InterClientService {
     Optional<Client> findById(int theId);
     void save(Client client);
+    Client findByClientName(String name);
+    Client findByFirstnameAndLastName(String first, String last);
 }
