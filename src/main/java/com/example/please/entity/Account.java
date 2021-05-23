@@ -1,9 +1,12 @@
 package com.example.please.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -16,7 +19,7 @@ public class Account {
     private Integer id;
     @Column(name = "account_type")
     private AccountType accountType;
-    private Double balance;
+    private Double balance = 2000D;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},
                fetch = FetchType.EAGER)
@@ -24,5 +27,8 @@ public class Account {
     @JsonBackReference
     private Client client;
 
+    public Account(AccountType accountType) {
+        this.accountType = accountType;
 
+    }
 }

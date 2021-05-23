@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface InterPaymentService {
-    Optional<Payment> findById(int theId);
+    Payment findById(int theId);
     boolean savePayment(Payment payment);
     List<PaymentDto> findAll(Payment payment);
 }

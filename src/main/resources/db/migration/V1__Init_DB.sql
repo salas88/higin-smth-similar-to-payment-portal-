@@ -1,21 +1,20 @@
-create table account
-(
-    id           integer not null auto_increment,
-    account_type integer,
-    balance      double precision,
-    client_id    integer, primary key (id)
-);
-
 create table client
 (
     id          integer not null auto_increment,
     first_name  varchar(255),
     last_name   varchar(255),
     password    varchar(255),
-    key (id)
+    primary key (id)
 );
 
-
+create table account
+(
+    id           integer not null auto_increment,
+    account_type integer,
+    balance      double precision,
+    client_id    integer, primary key (id),
+    foreign key (client_id) references client (id)
+);
 
 create table payment
 (
@@ -35,5 +34,3 @@ create table client_role(
   role_set     varchar(255),
   foreign key (client_id) references client(id)
 );
-
-alter table account add constraint account_client_kk foreign key (client_id) references client (id);

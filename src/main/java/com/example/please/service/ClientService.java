@@ -1,6 +1,7 @@
 package com.example.please.service;
 
 import com.example.please.entity.Client;
+import com.example.please.error.ClientNotFoundException;
 import com.example.please.repo.ClientRepo;
 import com.example.please.service.inter.InterClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,10 @@ public class ClientService implements InterClientService, UserDetailsService {
     @Autowired
     private ClientRepo clientRepo;
 
-    public Optional<Client> findById(int theId){
-        return clientRepo.findById(theId);
+    public Client findById(int theId){
+        return clientRepo.findById(theId).orElseThrow(
+                () -> new ClientNotFoundException((theId))
+        );
     }
 
     public void save(Client client){

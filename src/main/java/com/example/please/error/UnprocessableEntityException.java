@@ -5,11 +5,4 @@ public class UnprocessableEntityException extends RuntimeException{
         super(message);
     }
 
-    public UnprocessableEntityException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public UnprocessableEntityException(Throwable cause) {
-        super(cause);
-    }
 }

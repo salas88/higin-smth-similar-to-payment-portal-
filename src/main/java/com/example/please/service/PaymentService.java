@@ -2,6 +2,9 @@ package com.example.please.service;
 
 import com.example.please.entity.Account;
 import com.example.please.entity.Payment;
+import com.example.please.error.AccountNotFoundException;
+import com.example.please.error.ClientNotFoundException;
+import com.example.please.error.PaymentNotFoundException;
 import com.example.please.error.UnprocessableEntityException;
 import com.example.please.repo.AccountRepo;
 import com.example.please.repo.PaymentRepo;
@@ -25,32 +28,34 @@ public class PaymentService implements InterPaymentService {
     private PaymentRepo paymentRepo;
 
     @Override
-    public boolean savePayment(Payment payment) {
+    public boolean savePayment(Payment payment) throws ClientNotFoundException,AccountNotFoundException  {
 
-        Account accountSource = accountService.findById(payment.getSourceAccId()).get();
-        Account accountDest = accountService.findById(payment.getDestAccId()).get();
+
+        Account accountSource = accountService.findById(payment.getSourceAccId());
+        Account  accountDest = accountService.findById(payment.getDestAccId());
         Double accountSourceBalance = accountSource.getBalance();
         Double accountDestBalance = accountDest.getBalance();
-        Double amount = payment.getAmount();
+        Double   amount = payment.getAmount();
 
-            if(accountSourceBalance >= amount){
-                accountSource.setBalance( (accountSourceBalance-amount) );
-                accountDest.setBalance( (accountDestBalance+amount) );
-                payment.setPayerId(accountSource.getClient().getId());
-                payment.setRecipientId(accountDest.getClient().getId());
-                accountService.saveAccount(accountSource);
-                accountService.saveAccount(accountDest);
-                paymentRepo.save(payment);
-                return true;
-            } else {
-                throw new UnprocessableEntityException("недостаточно средствв на счете");
-            }
+
+        if(accountSourceBalance >= amount){
+            accountSource.setBalance( (accountSourceBalance-amount) );
+            accountDest.setBalance( (accountDestBalance+amount) );
+            payment.setPayerId(accountSource.getClient().getId());
+            payment.setRecipientId(accountDest.getClient().getId());
+            accountService.saveAccount(accountSource);
+            accountService.saveAccount(accountDest);
+            paymentRepo.save(payment);
+            return true;
+        } else {
+            throw new UnprocessableEntityException("недостаточно средствв на счете");
+        }
     }
 
 
     @Override
-    public Optional<Payment> findById(int theId) {
-        return paymentRepo.findById(theId);
+    public Payment findById(int theId) {
+        return paymentRepo.findById(theId).orElseThrow(() -> new PaymentNotFoundException(theId));
     }
 
 
@@ -66,8 +71,8 @@ public class PaymentService implements InterPaymentService {
 
         return payments.stream().map(el -> {
 
-            Optional<Account> sourceAcc = accountService.findById(sourceAccId);
-            Optional<Account> descAcc = accountService.findById(destAccId);
+            Account sourceAcc = accountService.findById(sourceAccId);
+            Account descAcc = accountService.findById(destAccId);
 
             return new PaymentDto.Builder()
                     .withPaymentId(el.getId())
@@ -76,12 +81,12 @@ public class PaymentService implements InterPaymentService {
                     .withDescAcc(el.getDestAccId())
                     .withAmount(el.getAmount())
                     .withPayer(new Payer(
-                            sourceAcc.get().getClient().getFirstName(),
-                            sourceAcc.get().getClient().getLastName()
+                            sourceAcc.getClient().getFirstName(),
+                            sourceAcc.getClient().getLastName()
                     ))
                     .withRecipient(new Recipient(
-                            descAcc.get().getClient().getFirstName(),
-                            descAcc.get().getClient().getLastName()
+                            descAcc.getClient().getFirstName(),
+                            descAcc.getClient().getLastName()
                     )).build();
 
         }).collect(Collectors.toList());

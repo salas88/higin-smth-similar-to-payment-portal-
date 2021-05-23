@@ -1,6 +1,8 @@
 package com.example.please.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.sun.istack.Nullable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +28,6 @@ public class Client implements UserDetails {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "client")
     @JsonManagedReference
     private List<Account> accounts;
-    @Nullable
     private String password;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
@@ -54,16 +55,6 @@ public class Client implements UserDetails {
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, lastName);
-    }
-
-    @Override
-    public String toString() {
-        return "Client{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", accounts=" + accounts +
-                '}';
     }
 
     @Override

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Client Account</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -7,7 +7,7 @@
 
 <body>
 <div class="container col-8">
-    <h2>All Courses</h2>
+
     <table class="table">
         <thead class="thead-dark">
         <tr>
@@ -21,23 +21,11 @@
             <td th:text="${tempAcc.id}"></td>
             <td th:text="${tempAcc.balance}"></td>
             <td th:text="${tempAcc.accountType}"></td>
-
-
-<!--            <td>-->
-
-<!--                <div th:if="${tempCourse.reviews != null}">-->
-<!--                    <a th:href="@{reviewForId(courseId=${tempCourse.id})}"  class="btn btn-warning btn-sm">more</a>-->
-<!--                </div>-->
-
-<!--                <div th:if="${tempCourse.reviews == null}">-->
-<!--                    <a th:href="@{createReview(courseId=${tempCourse.id})}"  class="btn btn-secondary btn-sm">Add</a>-->
-<!--                </div>-->
-
-<!--            </td>-->
         </tr>
 
-
     </table>
+
+
 </div>
 </body>
 </html>
