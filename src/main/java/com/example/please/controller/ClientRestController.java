@@ -3,7 +3,10 @@ package com.example.please.controller;
 import com.example.please.entity.Account;
 import com.example.please.entity.Client;
 import com.example.please.entity.Payment;
-import com.example.please.error.*;
+import com.example.please.error.AccountNotFoundException;
+import com.example.please.error.ControllerAdvisor;
+import com.example.please.error.NoDateFoundException;
+import com.example.please.error.UnprocessableEntityException;
 import com.example.please.service.AccountService;
 import com.example.please.service.ClientService;
 import com.example.please.service.PaymentService;
@@ -11,13 +14,17 @@ import com.example.please.utils.PaymentDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -95,75 +102,74 @@ public class ClientRestController {
 
 
 
-//    // I think this method is done
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @RequestMapping(
-//            method = RequestMethod.POST,
-//            value = "/clients/payment",
-//            consumes={"application/json", "application/xml"},
-//            produces={"application/json", "application/xml"})
-//    public HttpEntity addPayment(@RequestBody Payment payment){
-//           try {
-//               if(paymentService.savePayment(payment)){
-//                   return new HttpEntity(new HashMap<String,Integer>()
-//                   {{
-//                       put("payment_id", payment.getId());
-//                   }});
-//               }
-//           } catch (NoSuchElementException e){
-//               return new ControllerAdvisor().handlerException(e);
-//           }
-//        return new ControllerAdvisor()
-//                .handlerException(new UnprocessableEntityException("недостаточно средст"));
-//    }
-//
-//    @RequestMapping(method = RequestMethod.POST,
-//            value = "/clients/payments",
-//            consumes={"application/json", "application/xml"},
-//            produces={"application/json", "application/xml"})
-//    @ResponseStatus(HttpStatus.OK)
-//    public Object addNewPayments(@RequestBody Payment... payment){
-//
-//        List<ResponseEntity> paymentList = Arrays.stream(payment)
-//                .map(el -> {
-//                    try {
-//                        if(paymentService.savePayment(el)){
-//                            return ResponseEntity.ok().build();
-//                        }else {
-//                            return new ResponseEntity(
-//                             HttpStatus.UNPROCESSABLE_ENTITY
-//                            );
-//                        }
-//                    } catch (UnprocessableEntityException e) {
-//                        return new ControllerAdvisor().handlerException(e);
-//                    }})
-//                .collect(Collectors.toList());
-//
-//        boolean b = paymentList
-//                .stream()
-//                .allMatch(el -> el.getStatusCode().value() == 422);
-//
-//        return b ?
-//                        new UnprocessableEntityException(
-//                                "недостаточно средст у всех запросов") : paymentList;
-//    };
-//
-//
-//    @ResponseStatus(HttpStatus.OK)
-//    @RequestMapping(method = RequestMethod.GET,
-//                    value = "/clients/payments/history",
-//                    consumes={"application/json", "application/xml"},
-//                    produces={"application/json", "application/xml"})
-//    public Object getHistoryPayments(@RequestBody Payment payment){
-//
-//        List<PaymentDto> paymentDtoList = paymentService.findAll(payment);
-//
-//
-//        if(paymentDtoList.isEmpty())
-//           return new ClientRestExceptionHandler()
-//                    .handlerException(new ClientNotFoundException("Такого платежа не существует"));
-//
-//        return paymentDtoList;
-//    }
+    // I think this method is done
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/clients/payment",
+            consumes={"application/json", "application/xml"},
+            produces={"application/json", "application/xml"})
+    public HttpEntity addPayment(@RequestBody Payment payment){
+           try {
+               if(paymentService.savePayment(payment)){
+                   return new HttpEntity(new HashMap<String,Integer>()
+                   {{
+                       put("payment_id", payment.getId());
+                   }});
+               }
+           } catch (NoSuchElementException e){
+               return new ControllerAdvisor().handlerException(e);
+           }
+        return new ControllerAdvisor()
+                .handlerException(new UnprocessableEntityException("недостаточно средст"));
+    }
+
+    @RequestMapping(method = RequestMethod.POST,
+            value = "/clients/payments",
+            consumes={"application/json", "application/xml"},
+            produces={"application/json", "application/xml"})
+    @ResponseStatus(HttpStatus.OK)
+    public Object addNewPayments(@RequestBody Payment... payment){
+
+        List<ResponseEntity> paymentList = Arrays.stream(payment)
+                .map(el -> {
+                    try {
+                        if(paymentService.savePayment(el)){
+                            return ResponseEntity.ok().build();
+                        }else {
+                            return new ResponseEntity(
+                             HttpStatus.UNPROCESSABLE_ENTITY
+                            );
+                        }
+                    } catch (UnprocessableEntityException e) {
+                        return new ControllerAdvisor().handlerException(e);
+                    }})
+                .collect(Collectors.toList());
+
+        boolean b = paymentList
+                .stream()
+                .allMatch(el -> el.getStatusCode().value() == 422);
+
+        return b ?
+                        new UnprocessableEntityException(
+                                "недостаточно средст у всех запросов") : paymentList;
+    };
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET,
+                    value = "/clients/payments/history",
+                    consumes={"application/json", "application/xml"},
+                    produces={"application/json", "application/xml"})
+    public Object getHistoryPayments(@RequestBody Payment payment){
+
+        List<PaymentDto> paymentDtoList = paymentService.findAll(payment);
+
+
+        if(paymentDtoList.isEmpty())
+           return new NoDateFoundException();
+
+        return paymentDtoList;
+    }
 
 }

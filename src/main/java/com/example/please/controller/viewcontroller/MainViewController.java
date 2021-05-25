@@ -62,7 +62,6 @@ public class MainViewController {
                     .map(ob -> mapper.convertValue(ob, Account.class))
                     .collect(Collectors.toList());
             theModel.addAttribute("account", accounts);
-            logger.info("порядок 200");
         } catch ( HttpStatusCodeException exception){
 
         }
